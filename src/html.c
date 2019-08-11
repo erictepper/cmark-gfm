@@ -123,12 +123,12 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
   case CMARK_NODE_BLOCK_QUOTE:
     if (entering) {
       cmark_html_render_cr(html);
-      cmark_strbuf_puts(html, "<blockquote");
+      cmark_strbuf_puts(html, "\\cf2 ----QUOTE----\\line\n"); // edited by erictepper
       cmark_html_render_sourcepos(node, html, options);
-      cmark_strbuf_puts(html, ">\n");
+      // edited by erictepper
     } else {
       cmark_html_render_cr(html);
-      cmark_strbuf_puts(html, "</blockquote>\n");
+      cmark_strbuf_puts(html, "\\cf0 "); // edited by erictepper
     }
     break;
 
@@ -141,16 +141,16 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
       if (list_type == CMARK_BULLET_LIST) {
         cmark_strbuf_puts(html, "<ul");
         cmark_html_render_sourcepos(node, html, options);
-        cmark_strbuf_puts(html, ">\n");
+        cmark_strbuf_puts(html, ">"); // edited by erictepper
       } else if (start == 1) {
         cmark_strbuf_puts(html, "<ol");
         cmark_html_render_sourcepos(node, html, options);
-        cmark_strbuf_puts(html, ">\n");
+        cmark_strbuf_puts(html, ">"); // edited by erictepper
       } else {
         snprintf(buffer, BUFFER_SIZE, "<ol start=\"%d\"", start);
         cmark_strbuf_puts(html, buffer);
         cmark_html_render_sourcepos(node, html, options);
-        cmark_strbuf_puts(html, ">\n");
+        cmark_strbuf_puts(html, ">"); // edited by erictepper
       }
     } else {
       cmark_strbuf_puts(html,
@@ -251,9 +251,9 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
 
   case CMARK_NODE_THEMATIC_BREAK:
     cmark_html_render_cr(html);
-    cmark_strbuf_puts(html, "<hr");
+    cmark_strbuf_puts(html, "------------\\\n"); // edited by erictepper
     cmark_html_render_sourcepos(node, html, options);
-    cmark_strbuf_puts(html, " />\n");
+    // edited by erictepper
     break;
 
   case CMARK_NODE_PARAGRAPH:
@@ -266,16 +266,16 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
     }
     if (!tight) {
       if (entering) {
-        cmark_html_render_cr(html);
-        cmark_strbuf_puts(html, "<p");
-        cmark_html_render_sourcepos(node, html, options);
-        cmark_strbuf_putc(html, '>');
+        cmark_html_render_cr(html); 
+        // edited by erictepper
+        cmark_html_render_sourcepos(node, html, options); 
+        // edited by erictepper
       } else {
         if (parent->type == CMARK_NODE_FOOTNOTE_DEFINITION && node->next == NULL) {
           cmark_strbuf_putc(html, ' ');
           S_put_footnote_backref(renderer, html);
         }
-        cmark_strbuf_puts(html, "</p>\n");
+        cmark_strbuf_puts(html, "\\\n\\\n"); // edited by erictepper
       }
     }
     break;
@@ -285,12 +285,12 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
     break;
 
   case CMARK_NODE_LINEBREAK:
-    cmark_strbuf_puts(html, "<br />\n");
+    cmark_strbuf_puts(html, "\\line\n"); // edited by erictepper
     break;
 
   case CMARK_NODE_SOFTBREAK:
     if (options & CMARK_OPT_HARDBREAKS) {
-      cmark_strbuf_puts(html, "<br />\n");
+      cmark_strbuf_puts(html, "\\line\n"); // edited by erictepper
     } else if (options & CMARK_OPT_NOBREAKS) {
       cmark_strbuf_putc(html, ' ');
     } else {
@@ -337,35 +337,35 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
 
   case CMARK_NODE_STRONG:
     if (entering) {
-      cmark_strbuf_puts(html, "<strong>");
+      cmark_strbuf_puts(html, "\\b "); // edited by erictepper
     } else {
-      cmark_strbuf_puts(html, "</strong>");
+      cmark_strbuf_puts(html, "\\b0 "); // edited by erictepper
     }
     break;
 
   case CMARK_NODE_EMPH:
     if (entering) {
-      cmark_strbuf_puts(html, "<em>");
+      cmark_strbuf_puts(html, "\\i "); // edited by erictepper
     } else {
-      cmark_strbuf_puts(html, "</em>");
+      cmark_strbuf_puts(html, "\\i0 "); // edited by erictepper
     }
     break;
 
   case CMARK_NODE_LINK:
     if (entering) {
-      cmark_strbuf_puts(html, "<a href=\"");
+      cmark_strbuf_puts(html, "{\\field{\\*\\fldinst{HYPERLINK \""); // edited by erictepper
       if ((options & CMARK_OPT_UNSAFE) ||
             !(scan_dangerous_url(&node->as.link.url, 0))) {
         houdini_escape_href(html, node->as.link.url.data,
                             node->as.link.url.len);
       }
       if (node->as.link.title.len) {
-        cmark_strbuf_puts(html, "\" title=\"");
-        escape_html(html, node->as.link.title.data, node->as.link.title.len);
+        // cmark_strbuf_puts(html, "\" title=\""); edited by erictepper
+        // escape_html(html, node->as.link.title.data, node->as.link.title.len); edited by erictepper
       }
-      cmark_strbuf_puts(html, "\">");
+      cmark_strbuf_puts(html, "\"}}{\\fldrslt "); // edited by erictepper
     } else {
-      cmark_strbuf_puts(html, "</a>");
+      cmark_strbuf_puts(html, "}}"); // edited by erictepper
     }
     break;
 
